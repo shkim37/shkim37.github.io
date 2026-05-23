@@ -1,3 +1,12 @@
+---
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const { title = 'Home', description = 'Personal website' } = Astro.props;
+---
+
 <!doctype html>
 <html lang="en">
 	<head>
@@ -6,18 +15,213 @@
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<meta name="description" content={description} />
+		<title>{title}</title>
+		<script is:inline>
+			(() => {
+				const saved = localStorage.getItem('theme');
+				const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+				const theme = saved ?? (prefersDark ? 'dark' : 'light');
+				document.documentElement.dataset.theme = theme;
+			})();
+		</script>
 	</head>
 	<body>
-		<slot />
+		<div class="theme-toggle" role="group" aria-label="Theme">
+			<button type="button" class="theme-item" data-theme-set="light" aria-label="Light mode">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<circle cx="12" cy="12" r="4"/>
+					<path d="M12 2v2"/><path d="M12 20v2"/>
+					<path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/>
+					<path d="M2 12h2"/><path d="M20 12h2"/>
+					<path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+				</svg>
+				<span>Light</span>
+			</button>
+			<button type="button" class="theme-item" data-theme-set="dark" aria-label="Dark mode">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+				</svg>
+				<span>Dark</span>
+			</button>
+		</div>
+
+		<main>
+			<slot />
+		</main>
+
+		<script>
+			const root = document.documentElement;
+
+			function syncActive() {
+				const current = root.dataset.theme;
+				document.querySelectorAll<HTMLButtonElement>('[data-theme-set]').forEach((btn) => {
+					btn.classList.toggle('is-active', btn.dataset.themeSet === current);
+				});
+			}
+
+			document.querySelectorAll<HTMLButtonElement>('[data-theme-set]').forEach((btn) => {
+				btn.addEventListener('click', () => {
+					const next = btn.dataset.themeSet === 'dark' ? 'dark' : 'light';
+					root.dataset.theme = next;
+					localStorage.setItem('theme', next);
+					syncActive();
+				});
+			});
+
+			syncActive();
+		</script>
 	</body>
 </html>
 
-<style>
-	html,
-	body {
+<style is:global>
+	:root,
+	:root[data-theme='light'] {
+		--bg: #f0f0f0;
+		--text: #333333;
+		--muted: #777777;
+		--border: #e0e0e0;
+		/* reference + accent: same teal family (visible on #333 body text) */
+		--link: #0d9488;
+		--accent: #0d9488;
+		--link-hover: #0f766e;
+		--accent-hover: #0f766e;
+		--surface: #ffffff;
+		--toggle-bg: #e6e6e6;
+		--toggle-border: #d2d2d2;
+		--toggle-active-bg: #ffffff;
+		--accent-shadow: rgba(13, 148, 136, 0.28);
+		--accent-shadow-strong: rgba(13, 148, 136, 0.35);
+	}
+
+	:root[data-theme='dark'] {
+		--bg: #15171a;
+		--text: #e5e7eb;
+		--muted: #9aa0a6;
+		--border: #2a2d31;
+		--link: var(--accent);
+		--link-hover: #ff8f7a;
+		--surface: #1f2226;
+		--toggle-bg: #1f2226;
+		--toggle-border: #2a2d31;
+		--toggle-active-bg: #2a2d31;
+		--accent: #FF7259;
+		--accent-shadow: rgba(255, 114, 89, 0.28);
+		--accent-shadow-strong: rgba(255, 114, 89, 0.35);
+	}
+
+	*, *::before, *::after {
+		box-sizing: border-box;
+	}
+
+	html, body {
 		margin: 0;
+		padding: 0;
 		width: 100%;
-		height: 100%;
+	}
+
+	body {
+		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+		font-size: 16px;
+		line-height: 1.6;
+		color: var(--text);
+		background: var(--bg);
+		transition: background 0.2s ease, color 0.2s ease;
+	}
+
+	main {
+		max-width: 960px;
+		margin: 0 auto;
+		padding: 2rem 1.5rem 4rem;
+	}
+
+	a {
+		color: var(--link);
+		text-decoration: none;
+	}
+
+	/* Body/reference links — distinct from black-ish body text */
+	main a:not(.social-link):not(.paper-btn):not(.venue-tag):not(.workshop-tag) {
+		font-weight: 500;
+		text-decoration: underline;
+		text-decoration-color: color-mix(in srgb, var(--link) 50%, transparent);
+		text-underline-offset: 3px;
+	}
+
+	/* Exclude .social-link chips — underline on hover causes text to look smudged */
+	a:not(.social-link):not(.paper-btn):not(.venue-tag):not(.workshop-tag):hover {
+		color: var(--link-hover);
+		text-decoration-color: var(--link-hover);
+	}
+
+	h1 {
+		font-size: 2rem;
+		font-weight: 700;
+		margin: 0 0 1.5rem;
+	}
+
+	h2 {
+		font-size: 1.4rem;
+		font-weight: 600;
+		margin: 2rem 0 1rem;
+		border-bottom: 1px solid var(--border);
+		padding-bottom: 0.3rem;
+	}
+
+	h3 {
+		font-size: 1.1rem;
+		font-weight: 600;
+		margin: 1.2rem 0 0.4rem;
+	}
+
+	p {
+		margin: 0 0 0.8rem;
+	}
+
+	strong {
+		font-weight: 600;
+	}
+
+	.theme-toggle {
+		position: fixed;
+		top: 1rem;
+		right: 1rem;
+		display: inline-flex;
+		gap: 0.15rem;
+		padding: 0.2rem;
+		background: var(--toggle-bg);
+		border: 1px solid var(--toggle-border);
+		border-radius: 999px;
+		z-index: 100;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+	}
+
+	.theme-item {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.3rem;
+		padding: 0.35rem 0.7rem;
+		border: none;
+		background: transparent;
+		color: var(--muted);
+		font-size: 0.85rem;
+		font-family: inherit;
+		border-radius: 999px;
+		cursor: pointer;
+		transition: background 0.15s ease, color 0.15s ease;
+	}
+
+	.theme-item:hover {
+		color: var(--text);
+	}
+
+	.theme-item.is-active {
+		background: var(--toggle-active-bg);
+		color: var(--text);
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+	}
+
+	.theme-item svg {
+		display: block;
 	}
 </style>

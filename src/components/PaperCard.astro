@@ -1,0 +1,235 @@
+---
+interface Props {
+  venue: string;
+  venueUrl?: string;
+  workshop?: string;
+  workshopUrl?: string;
+  title: string;
+  paperUrl?: string;
+  authors: string;
+  highlightAuthor?: string;
+  /** Comma-separated names, e.g. "Sungha Kim, Gawon Lee" */
+  equalContributors?: string;
+  equalContributionNote?: string;
+  codeUrl?: string;
+  projectUrl?: string;
+}
+
+const {
+  venue,
+  venueUrl,
+  workshop,
+  workshopUrl,
+  title,
+  paperUrl,
+  authors,
+  highlightAuthor,
+  equalContributors,
+  equalContributionNote = '* Equal contribution',
+  codeUrl,
+  projectUrl,
+} = Astro.props;
+
+const authorList = authors.split(', ');
+const equalList = equalContributors
+  ? equalContributors.split(',').map((name) => name.trim())
+  : [];
+
+const PLACEHOLDERS = new Set(['#', 'tbd', 'todo', 'placeholder', 'coming-soon', 'none', 'n/a']);
+
+/** Returns false for empty, "#", "TBD", etc. — button stays hidden until a real URL is set. */
+function hasLink(url?: string) {
+  if (!url) return false;
+  const trimmed = url.trim().toLowerCase();
+  return trimmed.length > 0 && !PLACEHOLDERS.has(trimmed);
+}
+
+const showVenueLink = hasLink(venueUrl);
+const showWorkshopLink = hasLink(workshopUrl);
+const showProject = hasLink(projectUrl);
+const showPaper = hasLink(paperUrl);
+const showCode = hasLink(codeUrl);
+const hasAnyLink = showProject || showPaper || showCode;
+---
+
+<div class="paper-card">
+  <div class="paper-meta">
+    {showVenueLink
+      ? <a href={venueUrl} target="_blank" rel="noopener" class="venue-tag">{venue}</a>
+      : <span class="venue-tag venue-tag--plain">{venue}</span>
+    }
+    {workshop && (
+      showWorkshopLink
+        ? <a href={workshopUrl} target="_blank" rel="noopener" class="workshop-tag">{workshop}</a>
+        : <span class="workshop-tag workshop-tag--plain">{workshop}</span>
+    )}
+  </div>
+
+  <p class="paper-title">
+    {showPaper
+      ? <a href={paperUrl} target="_blank" rel="noopener">{title}</a>
+      : title
+    }
+  </p>
+
+  <p class="paper-authors">
+    {authorList.map((author, i) => {
+      const name = author.trim();
+      const isHighlight = highlightAuthor && name === highlightAuthor;
+      const isEqual = equalList.includes(name);
+      return (
+        <span>
+          {isHighlight ? <strong>{name}</strong> : <span>{name}</span>}
+          {isEqual && <sup class="equal-star">*</sup>}
+          {i < authorList.length - 1 ? ', ' : ''}
+        </span>
+      );
+    })}
+    {equalList.length > 0 && (
+      <span class="equal-note">{equalContributionNote}</span>
+    )}
+  </p>
+
+  {hasAnyLink && (
+    <div class="paper-links">
+      {showProject && (
+        <a href={projectUrl} class="paper-btn" target="_blank" rel="noopener">Project Page ↗</a>
+      )}
+      {showPaper && (
+        <a href={paperUrl} class="paper-btn" target="_blank" rel="noopener">Paper ↗</a>
+      )}
+      {showCode && (
+        <a href={codeUrl} class="paper-btn" target="_blank" rel="noopener">Code ↗</a>
+      )}
+    </div>
+  )}
+</div>
+
+<style>
+  .paper-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 1rem;
+    transition: box-shadow 0.18s ease;
+  }
+
+  .paper-card:hover {
+    box-shadow: 0 2px 12px var(--accent-shadow);
+  }
+
+  .paper-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 0.55rem;
+    flex-wrap: wrap;
+  }
+
+  .venue-tag {
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  a.venue-tag:hover {
+    text-decoration: underline;
+  }
+
+  .venue-tag--plain {
+    cursor: default;
+  }
+
+  .workshop-tag {
+    font-size: 0.76rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    background: var(--border);
+    padding: 0.1rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  a.workshop-tag:hover {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .workshop-tag--plain {
+    cursor: default;
+  }
+
+  .paper-title {
+    margin: 0 0 0.4rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+  .paper-title a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .paper-title a:hover {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .paper-authors {
+    margin: 0 0 0.8rem;
+    font-size: 0.87rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .paper-authors strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .equal-star {
+    color: var(--accent);
+    font-weight: 600;
+    margin-left: 0.05rem;
+  }
+
+  .equal-note {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.8rem;
+    font-style: italic;
+    color: var(--muted);
+  }
+
+  .paper-links {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .paper-btn {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--accent);
+    background: transparent;
+    border: 1px solid var(--accent);
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .paper-btn:hover {
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+  }
+</style>

@@ -1,0 +1,82 @@
+---
+layout: ../layouts/Layout.astro
+title: Sungha Kim
+description: Personal website of Sungha Kim
+---
+
+import ProfileHeader from '../components/ProfileHeader.astro';
+import PaperCard from '../components/PaperCard.astro';
+import News from '../components/News.astro';
+
+<div class="page-card">
+
+<ProfileHeader />
+
+<div class="page-content">
+
+## News
+
+<News date="May 2026">
+- Our paper **FLAG** is now available on arXiv.
+- Our paper **DynaFLIP** is now available on arXiv.
+</News>
+
+## Research
+
+<PaperCard
+  venue="Preprint"
+  workshop="Arxiv"
+  workshopUrl="https://arxiv.org/"
+  title="FLAG: Flow Policy MaxEnt-RL by Latent Augmented Guidance"
+  paperUrl="https://arxiv.org/abs/2506.12633"
+  authors="Sungha Kim, Gawon Lee, Jusuk Lee, Jonghae Park, H. Jin Kim, Daesol Cho"
+  highlightAuthor="Sungha Kim"
+  equalContributors="Sungha Kim, Gawon Lee"
+  codeUrl="#"
+  projectUrl="#"
+/>
+
+<PaperCard
+  venue="Preprint"
+  workshop="Arxiv"
+  workshopUrl="https://arxiv.org/"
+  title="DynaFLIP: Rethinking Robotics Perception via Tri-Modal-Dynamics Guided Representation"
+  paperUrl="https://arxiv.org/abs/2506.12633"
+  authors="Jusuk Lee, Seungjae Lee, Jonghun Shin, Hosung Jung, Sungha Kim, Daesol Cho, H. Jin Kim, Jia-Bin Huang, Furong Hwang"
+  highlightAuthor="Sungha Kim"
+  codeUrl="#"
+  projectUrl="#"
+/>
+
+<PaperCard
+  venue="ICML 2025 Workshop"
+  venueUrl="https://icml.cc/Conferences/2025"
+  workshop="MOSS"
+  workshopUrl="https://sites.google.com/view/moss2025/home?authuser=0"
+  title="Performance Plateaus in Inference-Time Scaling for Text-to-Image Diffusion Without External Models"
+  paperUrl="https://arxiv.org/abs/2506.12633"
+  authors="Changhyun Choi, Sungha Kim, H. Jin Kim"
+  highlightAuthor="Sungha Kim"
+/>
+
+</div>
+
+</div>
+
+<style>{`
+  .page-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .page-content {
+    padding: 0 1.75rem 1.75rem;
+  }
+
+  .page-content h2:first-of-type {
+    margin-top: 1.5rem;
+  }
+`}</style>
+
