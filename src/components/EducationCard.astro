@@ -1,0 +1,106 @@
+---
+interface Props {
+  degree: string;
+  school: string;
+  period: string;
+  location?: string;
+  advisor?: string;
+  logoSrc?: string;
+  logoAlt?: string;
+}
+
+const {
+  degree,
+  school,
+  period,
+  location,
+  advisor,
+  logoSrc = '/snu-logo.png',
+  logoAlt = 'Seoul National University',
+} = Astro.props;
+---
+
+<div class="edu-card">
+  <div class="edu-logo">
+    <img src={logoSrc} alt={logoAlt} />
+  </div>
+  <div class="edu-info">
+    <p class="edu-degree">{degree}</p>
+    <p class="edu-school">{school}</p>
+    {advisor && <p class="edu-advisor">Advised by {advisor}.</p>}
+    <p class="edu-period">
+      <em>{period}{location ? ` | ${location}` : ''}</em>
+    </p>
+  </div>
+</div>
+
+<style>
+  .edu-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .edu-card:last-of-type {
+    border-bottom: none;
+  }
+
+  .edu-logo {
+    flex-shrink: 0;
+    width: 72px;
+    display: flex;
+    align-items: flex-start;
+    padding-top: 0.1rem;
+  }
+
+  .edu-logo img {
+    width: 72px;
+    height: auto;
+    background: #fff;
+    border-radius: 6px;
+    padding: 4px;
+  }
+
+  .edu-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .edu-degree {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--text);
+  }
+
+  .edu-school {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--text);
+  }
+
+  .edu-advisor {
+    margin: 0.35rem 0 0;
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .edu-period {
+    margin: 0.1rem 0 0;
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .edu-period em {
+    font-style: italic;
+  }
+</style>
