@@ -8,6 +8,7 @@ import ProfileHeader from '../components/ProfileHeader.astro';
 import PaperCard from '../components/PaperCard.astro';
 import News from '../components/News.astro';
 import EducationCard from '../components/EducationCard.astro';
+import flagIntro from '../assets/FLAGIntro.mp4';
 
 <div class="page-card">
 
@@ -18,33 +19,31 @@ import EducationCard from '../components/EducationCard.astro';
 ## News
 
 <News date="May 2026">
-- Our paper **FLAG** is now available on arXiv.
-- Our paper **DynaFLIP** is now available on arXiv.
+- Our paper FLAG is now available on arXiv.
+- Our paper DynaFLIP is now available on arXiv.
 </News>
 
-## Research
+## Publications
 
 <PaperCard
-  venue="Preprint"
-  workshop="Arxiv"
-  workshopUrl="https://arxiv.org/"
+  venue="Under review"
   title="FLAG: Flow Policy MaxEnt-RL by Latent Augmented Guidance"
   paperUrl="https://arxiv.org/abs/2506.12633"
   authors="Sungha Kim, Gawon Lee, Jusuk Lee, Jonghae Park, H. Jin Kim, Daesol Cho"
   highlightAuthor="Sungha Kim"
   equalContributors="Sungha Kim, Gawon Lee"
+  thumbnailVideo={flagIntro}
   codeUrl="https://github.com/lgw1226/flag-official"
-  projectUrl="https://shkim37.github.io/FLAG/"
+  projectUrl="https://flag-rl.github.io/"
 />
 
 <PaperCard
-  venue="Preprint"
-  workshop="Arxiv"
-  workshopUrl="https://arxiv.org/"
+  venue="Under review"
   title="DynaFLIP: Rethinking Robotics Perception via Tri-Modal-Dynamics Guided Representation"
   paperUrl="https://arxiv.org/abs/2506.12633"
-  authors="Jusuk Lee, Seungjae Lee, Jonghun Shin, Hosung Jung, Sungha Kim, Daesol Cho, H. Jin Kim, Jia-Bin Huang, Furong Hwang"
+  authors="Jusuk Lee, Seungjae Lee, Jonghun Shin, Hosung Jung, Sungha Kim, Daesol Cho, H. Jin Kim, Jia-Bin Huang, Furong Huang"
   highlightAuthor="Sungha Kim"
+  equalAdvisors="Jia-Bin Huang, Furong Huang"
   codeUrl="https://github.com/dynaflip-robotics/dynaflip"
   projectUrl="https://dynaflip-robotics.github.io/"
 />

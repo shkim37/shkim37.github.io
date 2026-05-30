@@ -91,6 +91,9 @@ const { title = 'Home', description = 'Personal website' } = Astro.props;
 		--toggle-active-bg: #ffffff;
 		--accent-shadow: rgba(13, 148, 136, 0.28);
 		--accent-shadow-strong: rgba(13, 148, 136, 0.35);
+		--status-alert: #c62828;
+		--paper-title: #2077c5;
+		--paper-title-hover: #1a67b3;
 	}
 
 	:root[data-theme='dark'] {
@@ -107,6 +110,9 @@ const { title = 'Home', description = 'Personal website' } = Astro.props;
 		--accent: #FF7259;
 		--accent-shadow: rgba(255, 114, 89, 0.28);
 		--accent-shadow-strong: rgba(255, 114, 89, 0.35);
+		--status-alert: #FF6B81;
+		--paper-title: #6eb3f7;
+		--paper-title-hover: #8fc7ff;
 	}
 
 	*, *::before, *::after {
@@ -140,7 +146,7 @@ const { title = 'Home', description = 'Personal website' } = Astro.props;
 	}
 
 	/* Body/reference links — distinct from black-ish body text */
-	main a:not(.social-link):not(.paper-btn):not(.venue-tag):not(.workshop-tag) {
+	main a:not(.social-link):not(.paper-btn):not(.venue-tag):not(.workshop-tag):not(.paper-title-link) {
 		font-weight: 500;
 		text-decoration: underline;
 		text-decoration-color: color-mix(in srgb, var(--link) 50%, transparent);
@@ -148,7 +154,7 @@ const { title = 'Home', description = 'Personal website' } = Astro.props;
 	}
 
 	/* Exclude .social-link chips — underline on hover causes text to look smudged */
-	a:not(.social-link):not(.paper-btn):not(.venue-tag):not(.workshop-tag):hover {
+	a:not(.social-link):not(.paper-btn):not(.venue-tag):not(.workshop-tag):not(.paper-title-link):hover {
 		color: var(--link-hover);
 		text-decoration-color: var(--link-hover);
 	}

@@ -11,6 +11,15 @@ interface Props {
   /** Comma-separated names, e.g. "Sungha Kim, Gawon Lee" */
   equalContributors?: string;
   equalContributionNote?: string;
+  /** Comma-separated advisor names shown with † (no footnote). */
+  advisors?: string;
+  /** Comma-separated equal-advising names shown with †. */
+  equalAdvisors?: string;
+  equalAdvisingNote?: string;
+  /** Autoplaying looped preview video (takes priority over thumbnailImage). */
+  thumbnailVideo?: string;
+  /** Static thumbnail image when no video is provided. */
+  thumbnailImage?: string;
   codeUrl?: string;
   projectUrl?: string;
 }
@@ -26,6 +35,11 @@ const {
   highlightAuthor,
   equalContributors,
   equalContributionNote = '* Equal contribution',
+  advisors,
+  equalAdvisors,
+  equalAdvisingNote = '† Equal advising',
+  thumbnailVideo,
+  thumbnailImage,
   codeUrl,
   projectUrl,
 } = Astro.props;
@@ -33,6 +47,12 @@ const {
 const authorList = authors.split(', ');
 const equalList = equalContributors
   ? equalContributors.split(',').map((name) => name.trim())
+  : [];
+const advisorList = advisors
+  ? advisors.split(',').map((name) => name.trim())
+  : [];
+const equalAdvisorList = equalAdvisors
+  ? equalAdvisors.split(',').map((name) => name.trim())
   : [];
 
 const PLACEHOLDERS = new Set(['#', 'tbd', 'todo', 'placeholder', 'coming-soon', 'none', 'n/a']);
@@ -50,63 +70,126 @@ const showProject = hasLink(projectUrl);
 const showPaper = hasLink(paperUrl);
 const showCode = hasLink(codeUrl);
 const hasAnyLink = showProject || showPaper || showCode;
+
+const showVideo = hasLink(thumbnailVideo);
+const showImage = !showVideo && hasLink(thumbnailImage);
+const showThumbnail = showVideo || showImage;
 ---
 
-<div class="paper-card">
-  <div class="paper-meta">
-    {showVenueLink
-      ? <a href={venueUrl} target="_blank" rel="noopener" class="venue-tag">{venue}</a>
-      : <span class="venue-tag venue-tag--plain">{venue}</span>
-    }
-    {workshop && (
-      showWorkshopLink
-        ? <a href={workshopUrl} target="_blank" rel="noopener" class="workshop-tag">{workshop}</a>
-        : <span class="workshop-tag workshop-tag--plain">{workshop}</span>
-    )}
-  </div>
-
-  <p class="paper-title">
-    {showPaper
-      ? <a href={paperUrl} target="_blank" rel="noopener">{title}</a>
-      : title
-    }
-  </p>
-
-  <p class="paper-authors">
-    {authorList.map((author, i) => {
-      const name = author.trim();
-      const isHighlight = highlightAuthor && name === highlightAuthor;
-      const isEqual = equalList.includes(name);
-      return (
-        <span>
-          {isHighlight ? <strong>{name}</strong> : <span>{name}</span>}
-          {isEqual && <sup class="equal-star">*</sup>}
-          {i < authorList.length - 1 ? ', ' : ''}
-        </span>
-      );
-    })}
-    {equalList.length > 0 && (
-      <span class="equal-note">{equalContributionNote}</span>
-    )}
-  </p>
-
-  {hasAnyLink && (
-    <div class="paper-links">
-      {showProject && (
-        <a href={projectUrl} class="paper-btn" target="_blank" rel="noopener">Project Page ↗</a>
-      )}
-      {showPaper && (
-        <a href={paperUrl} class="paper-btn" target="_blank" rel="noopener">Paper ↗</a>
-      )}
-      {showCode && (
-        <a href={codeUrl} class="paper-btn" target="_blank" rel="noopener">Code ↗</a>
+<div class:list={['paper-card', { 'paper-card--with-thumbnail': showThumbnail }]}>
+  {showThumbnail && (
+    <div class="paper-thumbnail">
+      {showVideo ? (
+        <video
+          src={thumbnailVideo}
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          aria-hidden="true"
+        />
+      ) : (
+        <img src={thumbnailImage} alt="" loading="lazy" decoding="async" />
       )}
     </div>
   )}
+
+  <div class="paper-body">
+    {workshop && (
+      <div class="paper-meta">
+        {showWorkshopLink
+          ? (
+            <a href={workshopUrl} target="_blank" rel="noopener" class="workshop-tag">
+              {workshop}
+            </a>
+          )
+          : (
+            <span class="workshop-tag workshop-tag--plain">{workshop}</span>
+          )
+        }
+      </div>
+    )}
+
+    <p class="paper-title">
+      {showPaper
+        ? <a href={paperUrl} class="paper-title-link" target="_blank" rel="noopener">{title}</a>
+        : title
+      }
+    </p>
+
+    <p class="paper-authors">
+      {authorList.map((author, i) => {
+        const name = author.trim();
+        const isHighlight = highlightAuthor && name === highlightAuthor;
+        const isEqual = equalList.includes(name);
+        const isAdvisor = advisorList.includes(name);
+        const isEqualAdvisor = equalAdvisorList.includes(name);
+        return (
+          <span class="author-entry">{isHighlight ? <strong>{name}</strong> : name}{isEqual && <sup class="author-mark">*</sup>}{(isAdvisor || isEqualAdvisor) && <sup class="author-mark">†</sup>}{i < authorList.length - 1 ? ', ' : ''}</span>
+        );
+      })}
+      {equalList.length > 0 && (
+        <span class="author-note">{equalContributionNote}</span>
+      )}
+      {equalAdvisorList.length > 0 && (
+        <span class="author-note">{equalAdvisingNote}</span>
+      )}
+    </p>
+
+    {venue && (
+      <p class="paper-venue">
+        {showVenueLink
+          ? (
+            <a href={venueUrl} target="_blank" rel="noopener" class="paper-venue-label">
+              {venue}
+            </a>
+          )
+          : (
+            <span class="paper-venue-label">{venue}</span>
+          )
+        }
+      </p>
+    )}
+
+    {hasAnyLink && (
+      <div class="paper-links">
+        {showProject && (
+          <a href={projectUrl} class="paper-btn" target="_blank" rel="noopener">
+            <svg class="paper-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M3 12h18" />
+              <path d="M12 3c2.5 2.5 3.8 5.7 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.7-3.8-9s1.3-6.5 3.8-9z" />
+            </svg>
+            <span>project page</span>
+          </a>
+        )}
+        {showPaper && (
+          <a href={paperUrl} class="paper-btn" target="_blank" rel="noopener">
+            <svg class="paper-btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+            </svg>
+            <span>arXiv</span>
+          </a>
+        )}
+        {showCode && (
+          <a href={codeUrl} class="paper-btn" target="_blank" rel="noopener">
+            <svg class="paper-btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 .5C5.37.5 0 5.78 0 12.29c0 5.21 3.44 9.63 8.21 11.19.6.11.82-.25.82-.56 0-.28-.01-1.02-.02-2-3.34.71-4.04-1.58-4.04-1.58-.55-1.36-1.33-1.73-1.33-1.73-1.09-.73.08-.71.08-.71 1.2.08 1.84 1.21 1.84 1.21 1.07 1.79 2.81 1.27 3.49.97.11-.76.42-1.27.76-1.56-2.67-.3-5.47-1.31-5.47-5.83 0-1.29.47-2.34 1.24-3.17-.13-.3-.54-1.52.11-3.18 0 0 1.01-.32 3.3 1.21a11.6 11.6 0 0 1 3-.39c1.02 0 2.05.13 3 .39 2.29-1.53 3.3-1.21 3.3-1.21.65 1.66.24 2.88.12 3.18.77.83 1.24 1.88 1.24 3.17 0 4.53-2.81 5.53-5.49 5.82.43.36.81 1.08.81 2.18 0 1.57-.01 2.84-.01 3.23 0 .31.21.68.83.56A12.01 12.01 0 0 0 24 12.29C24 5.78 18.63.5 12 .5z" />
+            </svg>
+            <span>github</span>
+          </a>
+        )}
+      </div>
+    )}
+  </div>
 </div>
 
 <style>
   .paper-card {
+    display: flex;
+    align-items: stretch;
+    gap: 1rem;
     background: var(--surface);
     border: 1px solid var(--border);
     border-left: 3px solid var(--accent);
@@ -120,29 +203,34 @@ const hasAnyLink = showProject || showPaper || showCode;
     box-shadow: 0 2px 12px var(--accent-shadow);
   }
 
+  .paper-thumbnail {
+    flex: 0 0 23rem;
+    align-self: center;
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--border);
+    aspect-ratio: 16 / 10;
+  }
+
+  .paper-thumbnail video,
+  .paper-thumbnail img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .paper-body {
+    flex: 1;
+    min-width: 0;
+  }
+
   .paper-meta {
     display: flex;
     align-items: center;
     gap: 0.45rem;
     margin-bottom: 0.55rem;
     flex-wrap: wrap;
-  }
-
-  .venue-tag {
-    font-size: 0.76rem;
-    font-weight: 700;
-    color: var(--accent);
-    text-decoration: none;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
-
-  a.venue-tag:hover {
-    text-decoration: underline;
-  }
-
-  .venue-tag--plain {
-    cursor: default;
   }
 
   .workshop-tag {
@@ -166,26 +254,39 @@ const hasAnyLink = showProject || showPaper || showCode;
 
   .paper-title {
     margin: 0 0 0.4rem;
-    font-size: 0.95rem;
-    font-weight: 600;
-    line-height: 1.45;
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--paper-title);
   }
 
   .paper-title a {
-    color: var(--text);
+    color: inherit;
     text-decoration: none;
   }
 
   .paper-title a:hover {
-    color: var(--accent);
+    color: var(--paper-title-hover);
     text-decoration: none;
   }
 
   .paper-authors {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    row-gap: 0.2rem;
     margin: 0 0 0.8rem;
     font-size: 0.87rem;
     color: var(--muted);
     line-height: 1.5;
+  }
+
+  .paper-authors:has(+ .paper-venue) {
+    margin-bottom: 0.45rem;
+  }
+
+  .author-entry {
+    white-space: nowrap;
   }
 
   .paper-authors strong {
@@ -193,13 +294,14 @@ const hasAnyLink = showProject || showPaper || showCode;
     font-weight: 600;
   }
 
-  .equal-star {
+  .author-mark {
     color: var(--accent);
     font-weight: 600;
     margin-left: 0.05rem;
   }
 
-  .equal-note {
+  .author-note {
+    flex: 0 0 100%;
     display: block;
     margin-top: 0.35rem;
     font-size: 0.8rem;
@@ -207,29 +309,64 @@ const hasAnyLink = showProject || showPaper || showCode;
     color: var(--muted);
   }
 
+  .paper-venue {
+    margin: 0 0 0.75rem;
+  }
+
+  .paper-venue-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--status-alert);
+    text-decoration: none;
+  }
+
+  a.paper-venue-label:hover {
+    text-decoration: underline;
+  }
+
   .paper-links {
     display: flex;
-    gap: 0.4rem;
+    gap: 0.5rem;
     flex-wrap: wrap;
   }
 
   .paper-btn {
     display: inline-flex;
     align-items: center;
-    font-size: 0.8rem;
+    gap: 0.4rem;
+    font-size: 0.85rem;
     font-weight: 500;
-    color: var(--accent);
-    background: transparent;
-    border: 1px solid var(--accent);
-    padding: 0.2rem 0.65rem;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 0.35rem 0.85rem;
     border-radius: 999px;
     text-decoration: none;
-    transition: background 0.15s ease, color 0.15s ease;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
   }
 
   .paper-btn:hover {
-    background: var(--accent);
-    color: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 1px 6px var(--accent-shadow);
     text-decoration: none;
+  }
+
+  .paper-btn-icon {
+    width: 1rem;
+    height: 1rem;
+    flex: none;
+  }
+
+  @media (max-width: 640px) {
+    .paper-card--with-thumbnail {
+      flex-direction: column;
+    }
+
+    .paper-thumbnail {
+      flex: none;
+      width: 100%;
+      max-width: 100%;
+    }
   }
 </style>

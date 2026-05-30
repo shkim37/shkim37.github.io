@@ -40,17 +40,37 @@ const { date } = Astro.props;
   .news-text {
     font-size: 0.95rem;
     line-height: 1.6;
-    color: var(--muted);
   }
 
-  .news-text :global(strong) {
+  .news-text :global(ul) {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .news-text :global(li) {
+    margin: 0;
+    padding: 0.55rem 0.8rem;
+    background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+    border-radius: 6px;
     color: var(--text);
+    font-size: 0.98rem;
     font-weight: 600;
+    line-height: 1.45;
+  }
+
+  .news-text :global(li strong) {
+    color: inherit;
+    font-weight: inherit;
   }
 
   .news-text :global(a) {
     color: var(--accent);
     text-decoration: none;
+    font-weight: 600;
   }
 
   .news-text :global(a:hover) {
@@ -58,19 +78,13 @@ const { date } = Astro.props;
   }
 
   .news-text :global(p) {
-    margin: 0 0 0.4rem;
-  }
-
-  .news-text :global(p:last-child) {
-    margin-bottom: 0;
-  }
-
-  .news-text :global(ul) {
-    margin: 0.2rem 0 0;
-    padding-left: 1.2rem;
-  }
-
-  .news-text :global(li) {
-    margin-bottom: 0.25rem;
+    margin: 0;
+    padding: 0.55rem 0.8rem;
+    background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 0.98rem;
+    font-weight: 600;
+    line-height: 1.45;
   }
 </style>
