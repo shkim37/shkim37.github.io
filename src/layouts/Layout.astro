@@ -1,10 +1,17 @@
 ---
-interface Props {
+interface PageMeta {
 	title?: string;
 	description?: string;
 }
 
-const { title = 'Home', description = 'Personal website' } = Astro.props;
+interface Props extends PageMeta {
+	/** Set by MDX pages that use this file as their `layout`. */
+	frontmatter?: PageMeta;
+}
+
+const { frontmatter, ...direct } = Astro.props;
+const { title = 'Home', description = 'Personal website' } = frontmatter ?? direct;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!doctype html>
@@ -16,6 +23,13 @@ const { title = 'Home', description = 'Personal website' } = Astro.props;
 		<meta name="generator" content={Astro.generator} />
 		<meta name="description" content={description} />
 		<title>{title}</title>
+		<link rel="canonical" href={canonicalUrl} />
+		<!-- Link previews (KakaoTalk, Slack, X): text only, no image -->
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonicalUrl} />
+		<meta name="twitter:card" content="summary" />
 		<script is:inline>
 			(() => {
 				const saved = localStorage.getItem('theme');

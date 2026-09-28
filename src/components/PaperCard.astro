@@ -22,6 +22,8 @@ interface Props {
   thumbnailImage?: string;
   codeUrl?: string;
   projectUrl?: string;
+  /** X (Twitter) announcement post. */
+  xUrl?: string;
 }
 
 const {
@@ -42,6 +44,7 @@ const {
   thumbnailImage,
   codeUrl,
   projectUrl,
+  xUrl,
 } = Astro.props;
 
 const authorList = authors.split(', ');
@@ -69,7 +72,8 @@ const showWorkshopLink = hasLink(workshopUrl);
 const showProject = hasLink(projectUrl);
 const showPaper = hasLink(paperUrl);
 const showCode = hasLink(codeUrl);
-const hasAnyLink = showProject || showPaper || showCode;
+const showX = hasLink(xUrl);
+const hasAnyLink = showProject || showPaper || showCode || showX;
 
 const showVideo = hasLink(thumbnailVideo);
 const showImage = !showVideo && hasLink(thumbnailImage);
@@ -166,8 +170,11 @@ const showThumbnail = showVideo || showImage;
         )}
         {showPaper && (
           <a href={paperUrl} class="paper-btn" target="_blank" rel="noopener">
-            <svg class="paper-btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+            {/* arXiv logomark, taken from arxiv.org's primary logo SVG */}
+            <svg class="paper-btn-icon" viewBox="70.6 0 111.12 111.12" aria-hidden="true">
+              <path d="M127.98,55.61l-32.74,38.85c-1.29,1.37-2.08,3.78-1.36,5.5.75,1.8,2.46,2.91,4.4,2.91,1.09,0,1.99-.38,3.16-1.56l40.19-42.71c1.6-1.69,1.62-4.33.04-6.04l-13.68,3.05Z" fill="#aa142d" />
+              <path d="M127.98,55.61l31.19-38.27c1.49-1.99,2.2-3.03,1.49-4.72-.74-1.77-2.59-3.16-4.48-3.16h0c-1.06,0-1.72.09-3.01,1.11l-38.63,41.76c-1.72,1.84-1.71,4.7.02,6.53l47.79,51.07c1.02,1.05,2.05,1.19,3.14,1.19,1.93,0,3.19-1.14,4.03-2.82.72-1.73-.08-3.44-1.4-5.23l-40.12-47.46" fill="#afa497" />
+              <path d="M141.67,52.56L95,2.13S93.29.04,91.48,0s-3.6,1.02-4.34,2.79c-.7,1.69-.2,2.88,1.35,5.1l40.09,48.42" fill="#aa142d" />
             </svg>
             <span>arXiv</span>
           </a>
@@ -178,6 +185,14 @@ const showThumbnail = showVideo || showImage;
               <path d="M12 .5C5.37.5 0 5.78 0 12.29c0 5.21 3.44 9.63 8.21 11.19.6.11.82-.25.82-.56 0-.28-.01-1.02-.02-2-3.34.71-4.04-1.58-4.04-1.58-.55-1.36-1.33-1.73-1.33-1.73-1.09-.73.08-.71.08-.71 1.2.08 1.84 1.21 1.84 1.21 1.07 1.79 2.81 1.27 3.49.97.11-.76.42-1.27.76-1.56-2.67-.3-5.47-1.31-5.47-5.83 0-1.29.47-2.34 1.24-3.17-.13-.3-.54-1.52.11-3.18 0 0 1.01-.32 3.3 1.21a11.6 11.6 0 0 1 3-.39c1.02 0 2.05.13 3 .39 2.29-1.53 3.3-1.21 3.3-1.21.65 1.66.24 2.88.12 3.18.77.83 1.24 1.88 1.24 3.17 0 4.53-2.81 5.53-5.49 5.82.43.36.81 1.08.81 2.18 0 1.57-.01 2.84-.01 3.23 0 .31.21.68.83.56A12.01 12.01 0 0 0 24 12.29C24 5.78 18.63.5 12 .5z" />
             </svg>
             <span>github</span>
+          </a>
+        )}
+        {showX && (
+          <a href={xUrl} class="paper-btn" target="_blank" rel="noopener">
+            <svg class="paper-btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+            </svg>
+            <span>X post</span>
           </a>
         )}
       </div>
@@ -196,11 +211,6 @@ const showThumbnail = showVideo || showImage;
     border-radius: 8px;
     padding: 1.1rem 1.25rem;
     margin-bottom: 1rem;
-    transition: box-shadow 0.18s ease;
-  }
-
-  .paper-card:hover {
-    box-shadow: 0 2px 12px var(--accent-shadow);
   }
 
   .paper-thumbnail {
@@ -339,7 +349,7 @@ const showThumbnail = showVideo || showImage;
     color: var(--text);
     background: var(--surface);
     border: 1px solid var(--border);
-    padding: 0.35rem 0.85rem;
+    padding: 0.35rem 0.75rem;
     border-radius: 999px;
     text-decoration: none;
     transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
