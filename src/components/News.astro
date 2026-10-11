@@ -14,10 +14,15 @@ const { date } = Astro.props;
 <style>
   .news-item {
     display: grid;
-    grid-template-columns: 6rem 1fr;
+    grid-template-columns: 7rem 1fr;
     column-gap: 1rem;
     align-items: baseline;
-    padding: 0.35rem 0;
+    padding: 0.9rem 0;
+  }
+
+  /* Hairline rules between items, like a newspaper briefing list */
+  .news-item + .news-item {
+    border-top: 1px solid var(--border);
   }
 
   .news-date {

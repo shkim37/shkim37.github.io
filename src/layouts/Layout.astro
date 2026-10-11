@@ -88,6 +88,10 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 </html>
 
 <style is:global>
+	:root {
+		--font-serif: Georgia, 'Times New Roman', Times, serif;
+	}
+
 	:root,
 	:root[data-theme='light'] {
 		--bg: #f0f0f0;
@@ -149,9 +153,15 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 	}
 
 	main {
-		max-width: 1100px;
+		max-width: 1140px;
 		margin: 0 auto;
-		padding: 2rem 1.5rem 4rem;
+		padding: 3.5rem 1.5rem 5rem;
+	}
+
+	@media (max-width: 640px) {
+		main {
+			padding: 3.5rem 0.75rem 3rem;
+		}
 	}
 
 	a {
@@ -160,7 +170,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 	}
 
 	/* Body/reference links — distinct from black-ish body text */
-	main a:not(.social-link):not(.paper-btn):not(.venue-tag):not(.workshop-tag):not(.paper-title-link) {
+	main a:not(.social-link):not(.paper-btn):not(.venue-tag):not(.workshop-tag):not(.paper-title-link):not(.paper-venue-label) {
 		font-weight: 500;
 		text-decoration: underline;
 		text-decoration-color: color-mix(in srgb, var(--link) 50%, transparent);
@@ -168,7 +178,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 	}
 
 	/* Exclude .social-link chips — underline on hover causes text to look smudged */
-	a:not(.social-link):not(.paper-btn):not(.venue-tag):not(.workshop-tag):not(.paper-title-link):hover {
+	a:not(.social-link):not(.paper-btn):not(.venue-tag):not(.workshop-tag):not(.paper-title-link):not(.paper-venue-label):hover {
 		color: var(--link-hover);
 		text-decoration-color: var(--link-hover);
 	}
@@ -179,12 +189,14 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 		margin: 0 0 1.5rem;
 	}
 
+	/* Newspaper-style section heading: heavy rule above a serif title */
 	h2 {
-		font-size: 1.55rem;
-		font-weight: 600;
-		margin: 2rem 0 1rem;
-		border-bottom: 1px solid var(--border);
-		padding-bottom: 0.3rem;
+		font-family: var(--font-serif);
+		font-size: 1.65rem;
+		font-weight: 700;
+		margin: 4rem 0 0.75rem;
+		border-top: 2px solid var(--text);
+		padding-top: 0.75rem;
 	}
 
 	h3 {
