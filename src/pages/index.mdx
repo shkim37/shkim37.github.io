@@ -10,6 +10,7 @@ import News from '../components/News.astro';
 import EducationCard from '../components/EducationCard.astro';
 import flagIntro from '../assets/FLAGIntro.mp4';
 import dynaflipIntro from '../assets/dynaflip_intro.mp4';
+import dexOne2ManyIntro from '../assets/dex-one2many_intro.mp4';
 
 <div class="page-card">
 
@@ -19,11 +20,29 @@ import dynaflipIntro from '../assets/dynaflip_intro.mp4';
 
 ## News
 
+<News date="Oct 2026">
+- 📄 <span class="news-paper">Dex-One2Many</span> is now available on <a href="https://arxiv.org/abs/2610.12470" target="_blank" rel="noopener">arXiv</a>!
+</News>
+
 <News date="Sep 2026">
 - 🎉 Two papers (<span class="news-paper">FLAG</span> and <span class="news-paper">DynaFLIP</span>) are accepted to <span class="news-venue">NeurIPS 2026</span>!
 </News>
 
 ## Publications
+
+<PaperCard
+  venue="Preprint"
+  title="Dex-One2Many: Learning Dexterous Manipulation from a Single Human Demonstration"
+  paperUrl="https://arxiv.org/abs/2610.12470"
+  authors="Jusuk Lee, Sungha Kim, Yeonsoo Park, Jonguk Cheon, Yoonkyo Jung, Yongjun You, H. Jin Kim, Jia-Bin Huang, Furong Huang, Youngseok Jang, Seungjae Lee"
+  highlightAuthor="Sungha Kim"
+  equalContributors="Jusuk Lee, Sungha Kim, Yeonsoo Park"
+  equalAdvisors="Youngseok Jang, Seungjae Lee"
+  thumbnailVideo={dexOne2ManyIntro}
+  codeComingSoon
+  projectUrl="https://dex-one2many.github.io/"
+  xUrl="https://x.com/JayLEE_0301/status/2108441414724182343"
+/>
 
 <PaperCard
   venue="NeurIPS 2026"
